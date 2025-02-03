@@ -11,7 +11,9 @@ if (!DB_URI) {
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(DB_URI);
+    await mongoose.connect(DB_URI, {
+      dbName: "subdub",
+    });
     console.log("___ MongoDB connected ___");
   } catch (error) {
     console.error("MongoDB connection error:", error.message);
