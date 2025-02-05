@@ -9,6 +9,7 @@ import errorMiddleware from "./middlewares/error.middleware.js";
 
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import workflowRouter from "./routes/workflow.route.js";
 import subscriptionRouter from "./routes/subscription.route.js";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(arcjetMiddleware);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/subscriptions", subscriptionRouter);
+app.use("/api/v1/workflows", workflowRouter);
 
 app.use(errorMiddleware);
 
