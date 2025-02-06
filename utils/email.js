@@ -1,22 +1,30 @@
+import {
+  EMAILJS_SERVICE_ID,
+  EMAILJS_TEMPLATE_ID,
+  EMAILJS_USER_ID,
+} from "../config/env.js";
+
 const emailTemplates = [
   {
     label: "7 days before reminder",
     subject:
       "📅 Reminder: Your {subscriptionName} Subscription Renews in 7 Days!",
-    body: `Hello {userName},  
+    body: `
+      Hello {userName},  
 
-Your **{subscriptionName}** subscription is set to renew on **{renewalDate}** (7 days from today).  
+      Your **{subscriptionName}** subscription is set to renew on **{renewalDate}** (7 days from today).  
 
-🔹 **Plan:** {planName}  
-🔹 **Price:** {price}  
-🔹 **Payment Method:** {paymentMethod}  
+      🔹 **Plan:** {planName}  
+      🔹 **Price:** {price}  
+      🔹 **Payment Method:** {paymentMethod}  
 
-If you’d like to make changes or cancel your subscription, please visit your account settings before the renewal date.  
+      If you’d like to make changes or cancel your subscription, please visit your account settings before the renewal date.  
 
-Need help? Contact our support team anytime.  
+      Need help? Contact our support team anytime.  
 
-Best,  
-[Your Company]`,
+      Best,  
+      [Your Company]
+    `,
   },
   {
     label: "5 days before reminder",
@@ -91,16 +99,17 @@ Warm regards,
 ];
 
 const sendEmail = async ({ to, type, subscription }) => {
-  if (!to || !type) throw new Error("Email to and type are required");
+  if (!to || !type) throw new Error("Email recipient and type are required");
 
   const template = emailTemplates.find((t) => t.label === type);
   if (!template) throw new Error("Invalid email type");
 
+  // Replace placeholders with actual subscription values
   const message = template.body
     .replace("{userName}", subscription.user.name)
     .replace("{subscriptionName}", subscription.name)
-    .replace("{renewalDate}", subscription.renewalDate.toDateString())
-    .replace("{planName}", subscription.name)
+    .replace("{renewalDate}", subscription.renewalDate)
+    .replace("{planName}", subscription.planName) // Fixed planName replacement
     .replace("{price}", `$${subscription.price}`)
     .replace("{paymentMethod}", subscription.paymentMethod);
 
@@ -116,13 +125,11 @@ const sendEmail = async ({ to, type, subscription }) => {
       "https://api.emailjs.com/api/v1.0/email/send",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          service_id: process.env.EMAILJS_SERVICE_ID,
-          template_id: process.env.EMAILJS_TEMPLATE_ID,
-          user_id: process.env.EMAILJS_USER_ID,
+          service_id: EMAILJS_SERVICE_ID,
+          template_id: EMAILJS_TEMPLATE_ID,
+          user_id: EMAILJS_USER_ID,
           template_params: {
             to_email: to,
             subject,
@@ -132,17 +139,25 @@ const sendEmail = async ({ to, type, subscription }) => {
       }
     );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error sending email:", errorData);
-      throw new Error(errorData.message || "Failed to send email");
+    // Clone response before attempting to read it
+    const responseClone = response.clone();
+
+    let responseData;
+    try {
+      responseData = await response.json();
+    } catch {
+      responseData = await responseClone.text(); // Read text if JSON fails
     }
 
-    const data = await response.json();
-    console.log("Email sent successfully:", data);
-    return data;
+    if (!response.ok) {
+      console.error("Error sending email:", responseData);
+      throw new Error(responseData?.message || "Failed to send email");
+    }
+
+    console.log("Email sent successfully:", responseData);
+    return responseData;
   } catch (error) {
-    console.error("Error sending email:", error.message);
+    console.error("ERROR SENDING EMAIL:", error);
     throw error;
   }
 };
