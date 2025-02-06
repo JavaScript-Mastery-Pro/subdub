@@ -1,5 +1,5 @@
 import { SERVER_URL } from "../config/env.js";
-import { workflowClient } from "../config/upstash.js";
+// import { workflowClient } from "../config/upstash.js";
 import Subscription from "../models/subscription.model.js";
 
 // GET all subscriptions
@@ -35,17 +35,26 @@ export const createSubscription = async (req, res, next) => {
       user: req.user._id,
     });
 
-    const { workflowRunId } = await workflowClient.trigger({
-      url: `${SERVER_URL}/api/v1/workflows/subscription/reminder`,
-      body: {
-        subscriptionId: subscription._id,
-        subscriptionUserId: req.user._id,
-      },
-      workflowRunId: `${subscription.name} reminder for ${subscription.user}`,
-      // retries: 3,
-    });
+    // const { workflowRunId } = await workflowClient.trigger({
+    //   url: `http://localhost:5500/api/v1/workflows/subscription/reminder`,
+    //   body: { subscriptionId: `${subscription.id}` },
+    //   workflowRunId: `${
+    //     subscription.name
+    //   } reminder for ${subscription.user.toString()}`,
+    //   // retries: 3,
+    // });
 
-    console.log(workflowRunId);
+    // console.log(workflowRunId);
+
+    await fetch(`${SERVER_URL}/api/v1/workflows/subscription/reminder`, {
+      method: "POST",
+      body: JSON.stringify({
+        subscriptionId: subscription.id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     res.status(201).json({ success: true, data: subscription });
   } catch (error) {
