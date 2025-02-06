@@ -29,72 +29,80 @@ const emailTemplates = [
   {
     label: "5 days before reminder",
     subject: "⏳ {subscriptionName} Renews in 5 Days – Stay Subscribed!",
-    body: `Hey {userName},  
+    body: `
+      Hey {userName},  
 
-Just a reminder that your **{subscriptionName}** subscription renews on **{renewalDate}** (5 days from today).  
+      Just a reminder that your **{subscriptionName}** subscription renews on **{renewalDate}** (5 days from today).  
 
-🔹 **Plan:** {planName}  
-🔹 **Price:** {price}  
-🔹 **Payment Method:** {paymentMethod}  
+      🔹 **Plan:** {planName}  
+      🔹 **Price:** {price}  
+      🔹 **Payment Method:** {paymentMethod}  
 
-No action is needed if you wish to continue. To update your details, visit your account page.  
+      No action is needed if you wish to continue. To update your details, visit your account page.  
 
-Cheers,  
-[Your Company]`,
+      Cheers,  
+      [Your Company]
+    `,
   },
   {
     label: "2 days before reminder",
     subject: "🚀 2 Days Left! {subscriptionName} Subscription Renewal",
-    body: `Hi {userName},  
+    body: `
+      Hi {userName},  
 
-Your **{subscriptionName}** subscription renewal is just **2 days away** on **{renewalDate}**.  
+      Your **{subscriptionName}** subscription renewal is just **2 days away** on **{renewalDate}**.  
 
-🔹 **Plan:** {planName}  
-🔹 **Price:** {price}  
-🔹 **Payment Method:** {paymentMethod}  
+      🔹 **Plan:** {planName}  
+      🔹 **Price:** {price}  
+      🔹 **Payment Method:** {paymentMethod}  
 
-Make sure your payment details are up to date to avoid any service interruptions.  
+      Make sure your payment details are up to date to avoid any service interruptions.  
 
-Have questions? We’re here to help.  
+      Have questions? We’re here to help.  
 
-Best regards,  
-[Your Company]`,
+      Best regards,  
+      [Your Company]
+    `,
   },
   {
     label: "1 day before reminder",
     subject: "⚡ Final Reminder: {subscriptionName} Renews Tomorrow!",
-    body: `Hello {userName},  
+    body: `
+      Hello {userName},  
 
-This is your **final reminder**! Your **{subscriptionName}** subscription will renew **tomorrow** on **{renewalDate}**.  
+      This is your **final reminder**! Your **{subscriptionName}** subscription will renew **tomorrow** on **{renewalDate}**.  
 
-🔹 **Plan:** {planName}  
-🔹 **Price:** {price}  
-🔹 **Payment Method:** {paymentMethod}  
+      🔹 **Plan:** {planName}  
+      🔹 **Price:** {price}  
+      🔹 **Payment Method:** {paymentMethod}  
 
-If you wish to make any changes, please do so before midnight today.  
+      If you wish to make any changes, please do so before midnight today.  
 
-Thanks for being a valued subscriber!  
+      Thanks for being a valued subscriber!  
 
-Sincerely,  
-[Your Company]`,
+      Sincerely,  
+      [Your Company]
+    `,
   },
   {
     label: "Final day reminder",
     subject: "✅ {subscriptionName} Renews Today – You’re All Set!",
-    body: `Hey {userName},  
+    body: `
+      Hey {userName},  
 
-Today’s the day! Your **{subscriptionName}** subscription renews **today** (**{renewalDate}**).  
+      Today’s the day! Your **{subscriptionName}** subscription renews **today** (**{renewalDate}**).  
 
-🔹 **Plan:** {planName}  
-🔹 **Price:** {price}  
-🔹 **Payment Method:** {paymentMethod}  
+      🔹 **Plan:** {planName}  
+      🔹 **Price:** {price}  
+      🔹 **Payment Method:** {paymentMethod}  
 
-If everything looks good, you’re all set for another subscription cycle. If you have any issues, our support team is here to assist.  
+      If everything looks good, you’re all set for another subscription cycle. If you have any issues, our support team is here to assist.  
 
-Looking forward to serving you another term!  
+      Looking forward to serving you another term!  
 
-Warm regards,  
-[Your Company]`,
+      Warm regards,  
+      [Your Company]
+    `,
   },
 ];
 
