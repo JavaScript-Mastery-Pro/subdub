@@ -17,8 +17,6 @@ const reminders = [
 export const sendReminders = serve(async (context) => {
   const { subscriptionId } = context.requestPayload;
 
-  console.log("🔥 COMING HERE", subscriptionId);
-
   const subscription = await context.run("get subscription", async () => {
     return await Subscription.findById(subscriptionId).populate(
       "user",
@@ -41,13 +39,6 @@ export const sendReminders = serve(async (context) => {
   const result = await context.run("check renewal date", async () => {
     const renewalDate = dayjs(subscription.renewalDate);
     const now = dayjs();
-
-    console.log(
-      "🔥 CHECKING RENEWAL DATE",
-      renewalDate,
-      now,
-      renewalDate.isBefore(now)
-    );
 
     if (renewalDate.isBefore(now)) {
       return {
