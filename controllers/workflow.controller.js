@@ -3,8 +3,8 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { serve } = require("@upstash/workflow/express");
 
-import sendEmail from "../utils/email.js";
 import Subscription from "../models/subscription.model.js";
+import { sendRemiderEmail } from "../utils/send-email.js";
 
 const reminders = [
   { label: "7 days before reminder", daysBefore: 7 },
@@ -83,7 +83,7 @@ export const sendReminders = serve(async (context) => {
     await context.run(reminder.label, async () => {
       console.log(`${reminder.label} triggered at ${dayjs().toISOString()}`);
 
-      await sendEmail({
+      await sendRemiderEmail({
         to: subscription.user.email,
         type: reminder.label,
         subscription,

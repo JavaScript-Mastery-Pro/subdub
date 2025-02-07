@@ -13,3 +13,5 @@ export const {
 } = process.env;
 export const { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_USER_ID } =
   process.env;
+
+export const { EMAIL_PASSWORD } = process.env;
