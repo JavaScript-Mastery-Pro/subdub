@@ -6,7 +6,11 @@ import Subscription from "../models/subscription.model.js";
 export const getSubscriptions = async (req, res, next) => {
   try {
     const subscriptions = await Subscription.find();
-    res.status(200).json({ success: true, data: subscriptions });
+    res.status(200).json({
+      success: true,
+      message: "Subscriptions fetched successfully",
+      data: subscriptions,
+    });
   } catch (error) {
     next(error);
   }
@@ -21,7 +25,11 @@ export const getSubscription = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    res.status(200).json({ success: true, data: subscription });
+    res.status(200).json({
+      success: true,
+      message: "Subscription fetched successfully",
+      data: subscription,
+    });
   } catch (error) {
     next(error);
   }
@@ -48,6 +56,7 @@ export const createSubscription = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
+      message: "Subscription created successfully",
       data: {
         subscription,
         workflowRunId,
@@ -73,7 +82,11 @@ export const updateSubscription = async (req, res, next) => {
       throw error;
     }
 
-    res.status(200).json({ success: true, data: subscription });
+    res.status(200).json({
+      success: true,
+      message: "Subscription updated successfully",
+      data: subscription,
+    });
   } catch (error) {
     next(error);
   }
@@ -90,7 +103,11 @@ export const deleteSubscription = async (req, res, next) => {
       throw error;
     }
 
-    res.status(200).json({ success: true, data: subscription });
+    res.status(200).json({
+      success: true,
+      message: "Subscription deleted successfully",
+      data: subscription,
+    });
   } catch (error) {
     next(error);
   }
@@ -108,7 +125,11 @@ export const getUserSubscriptions = async (req, res, next) => {
 
     const subscriptions = await Subscription.find({ user: req.params.id });
 
-    res.status(200).json({ success: true, data: subscriptions });
+    res.status(200).json({
+      success: true,
+      message: "User Subscriptions fetched successfully",
+      data: subscriptions,
+    });
   } catch (error) {
     next(error);
   }
@@ -135,7 +156,11 @@ export const cancelSubscription = async (req, res, next) => {
     subscription.status = "cancelled";
     await subscription.save();
 
-    res.status(200).json({ success: true, data: subscription });
+    res.status(200).json({
+      success: true,
+      message: "Subscription cancelled successfully",
+      data: subscription,
+    });
   } catch (error) {
     next(error);
   }
@@ -156,7 +181,13 @@ export const getUpcomingRenewals = async (req, res, next) => {
       status: "active",
     }).populate("user", "name email");
 
-    res.status(200).json({ success: true, data: subscriptions });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Upcoming renewals fetched successfully",
+        data: subscriptions,
+      });
   } catch (error) {
     next(error);
   }
