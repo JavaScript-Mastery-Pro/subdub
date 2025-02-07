@@ -70,6 +70,12 @@ export const sendReminders = serve(async (context) => {
     const reminderDate = renewalDate.subtract(reminder.daysBefore, "day");
     const timeDiff = reminderDate.diff(now, "day");
 
+    // **Skip past reminders**
+    if (timeDiff < 0) {
+      console.log(`Skipping ${reminder.label} as its date has already passed.`);
+      continue;
+    }
+
     if (timeDiff > 0) {
       console.log(
         `Sleeping until ${reminder.label} at ${reminderDate.toISOString()}`
