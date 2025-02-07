@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import mongoose from "mongoose";
 
 const subscriptionSchema = new mongoose.Schema(
@@ -77,16 +78,15 @@ subscriptionSchema.pre("validate", function (next) {
       quarterly: 90,
       yearly: 365,
     };
-    this.renewalDate = new Date(this.startDate);
-    this.renewalDate.setDate(
-      this.startDate.getDate() + renewalPeriods[this.frequency]
-    );
+    this.renewalDate = dayjs(this.startDate)
+      .add(renewalPeriods[this.frequency], "day")
+      .toDate();
   }
 
-  // Auto-update status if renewalDate has passed
-  if (this.renewalDate < new Date()) {
-    this.status = "expired";
-  }
+  const now = dayjs();
+  const renewalDay = dayjs(this.renewalDate);
+
+  this.status = now.isAfter(renewalDay, "day") ? "expired" : "active";
 
   next();
 });

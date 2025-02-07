@@ -40,62 +40,57 @@ export const sendReminders = serve(async (context) => {
     const renewalDate = dayjs(subscription.renewalDate);
     const now = dayjs();
 
-    if (renewalDate.isBefore(now)) {
-      return {
-        shouldStop: true,
-        renewalDate: renewalDate.toISOString(),
-        now: now.toISOString(),
-      };
-    }
+    const shouldStop = renewalDate.isBefore(now, "day");
 
     return {
-      shouldStop: false,
+      shouldStop,
       renewalDate: renewalDate.toISOString(),
       now: now.toISOString(),
     };
   });
 
-  const shouldStop = result.shouldStop;
-  const renewalDate = dayjs(result.renewalDate);
-  const now = dayjs(result.now);
-
-  if (shouldStop) {
+  if (result.shouldStop) {
     console.log(
       `Renewal date of ${subscription.name} is in the past. Stopping workflow.`
     );
     return;
   }
 
+  const renewalDate = dayjs(result.renewalDate);
+  let now = dayjs(result.now);
+
   for (const reminder of reminders) {
     const reminderDate = renewalDate.subtract(reminder.daysBefore, "day");
-    const timeDiff = reminderDate.diff(now, "day");
 
-    // **Skip past reminders**
-    if (timeDiff < 0) {
-      console.log(`Skipping ${reminder.label} as its date has already passed.`);
-      continue;
-    }
-
-    if (timeDiff > 0) {
+    if (now.isBefore(reminderDate)) {
       console.log(
-        `Sleeping until ${reminder.label} at ${reminderDate.toISOString()}`
+        `Sleeping until next reminder: ${
+          reminder.label
+        } on ${reminderDate.toISOString()}`
       );
-      await context.sleepUntil(
-        `${reminder.label} sleep`,
-        reminderDate.toDate()
-      );
+
+      await context.sleepUntil(reminder.label, reminderDate.toDate());
+      now = dayjs(); // Update current time after waking up
     }
 
-    await context.run(reminder.label, async () => {
-      console.log(`${reminder.label} triggered at ${dayjs().toISOString()}`);
+    if (now.isSame(reminderDate, "day")) {
+      console.log(`Sending ${reminder.label} email.`);
 
-      await sendReminderEmail({
-        to: subscription.user.email,
-        type: reminder.label,
-        subscription,
+      await context.run(reminder.label, async () => {
+        console.log(`${reminder.label} triggered at ${dayjs().toISOString()}`);
+
+        await sendReminderEmail({
+          to: subscription.user.email,
+          type: reminder.label,
+          subscription,
+        });
       });
-    });
-  }
 
-  return;
+      // If it's the final day reminder, stop the workflow
+      if (reminder.daysBefore === 0) {
+        console.log("Final day reached. Stopping workflow.");
+        return;
+      }
+    }
+  }
 });
