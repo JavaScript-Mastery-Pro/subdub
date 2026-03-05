@@ -335,7 +335,27 @@ Return all subscriptions.
 
 Auth: No
 
-Success: `200 OK` with `data: Subscription[]`
+Query params:
+- `page` (number, optional, default `1`)
+- `limit` (number, optional, default `10`, max `100`)
+
+Success: `200 OK`
+
+```json
+{
+  "success": true,
+  "message": "Subscriptions fetched successfully",
+  "data": [{ "...": "Subscription" }],
+  "pagination": {
+    "total": 57,
+    "page": 2,
+    "limit": 10,
+    "totalPages": 6,
+    "hasNextPage": true,
+    "hasPrevPage": true
+  }
+}
+```
 
 ### `GET /api/v1/subscriptions/:id`
 Return one subscription.
@@ -439,8 +459,12 @@ Path params:
 Authorization rule:
 - Allowed only when `req.user.id === req.params.id`
 
+Query params:
+- `page` (number, optional, default `1`)
+- `limit` (number, optional, default `10`, max `100`)
+
 Responses:
-- `200` with list of user subscriptions
+- `200` with paginated list of user subscriptions
 - `401` if requester is not owner
 
 ### `PUT /api/v1/subscriptions/:id/cancel`
@@ -460,6 +484,10 @@ Success: `200 OK` with updated subscription object
 Intended to return active subscriptions approaching renewal for authenticated user.
 
 Auth: Yes
+
+Query params (implemented in handler):
+- `page` (number, optional, default `1`)
+- `limit` (number, optional, default `10`, max `100`)
 
 Current implementation state:
 - Route exists but has a path-order conflict and parameter mismatch, so it does not behave as intended (see section 10).
@@ -593,6 +621,6 @@ For production-grade API maturity:
 3. Apply consistent auth and ownership checks on all user/subscription mutations.
 4. Fix and test `/subscriptions/upcoming-renewals` route behavior.
 5. Replace placeholder endpoints with full implementations or remove them from public surface.
-6. Add pagination/filter/sort to list endpoints.
+6. Add filtering/sort options to list endpoints.
 7. Add API integration tests (auth, validation, ownership, workflow trigger).
 8. Publish and enforce OpenAPI schema validation in CI.
