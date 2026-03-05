@@ -19,6 +19,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(arcjetMiddleware);
+
+app.use("/api/v1", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/subscriptions", subscriptionRouter);
@@ -28,11 +38,16 @@ app.use(errorMiddleware);
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
-app.listen(PORT, () => {
-  console.log(`🚀 App listening on the port ${PORT}`);
-
-  // Connect to MongoDB
-  connectDB();
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`🚀 App listening on the port ${PORT}`);
+    try {
+      await connectDB();
+    } catch (error) {
+      console.error("MongoDB connection error:", error.message);
+      process.exit(1);
+    }
+  });
+}
 
 export default app;

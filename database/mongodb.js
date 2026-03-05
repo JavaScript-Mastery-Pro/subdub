@@ -9,16 +9,32 @@ if (!DB_URI) {
   );
 }
 
+let cachedConnection = null;
+let connectionPromise = null;
+
 const connectDB = async () => {
-  try {
-    await mongoose.connect(DB_URI, {
-      dbName: "subdub",
-    });
-    console.log("___ MongoDB connected ___");
-  } catch (error) {
-    console.error("MongoDB connection error:", error.message);
-    process.exit(1); // Exit process with failure
+  if (cachedConnection) {
+    return cachedConnection;
   }
+
+  if (!connectionPromise) {
+    connectionPromise = mongoose
+      .connect(DB_URI, {
+        dbName: "subdub",
+        serverSelectionTimeoutMS: 5000,
+      })
+      .then((mongooseInstance) => {
+        console.log("___ MongoDB connected ___");
+        return mongooseInstance;
+      })
+      .catch((error) => {
+        connectionPromise = null;
+        throw error;
+      });
+  }
+
+  cachedConnection = await connectionPromise;
+  return cachedConnection;
 };
 
 export default connectDB;
