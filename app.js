@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(arcjetMiddleware);
+// app.use(arcjetMiddleware);
 
 app.use("/api/v1", async (req, res, next) => {
   try {
